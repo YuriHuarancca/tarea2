@@ -1,89 +1,71 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateCategoryDTO } from './dtos/create-category.dto';
-import { UpdateCategoryDTO } from './dtos/update-category.dto';
+import { CreateCustomerDTO } from './dtos/create-customer.dto';
+import { UpdateCustomerDTO } from './dtos/update-customer.dto';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
-export class CategoriesService {
+export class CustomersService {
     constructor(private readonly prisma: PrismaService) { }
 
 
-// esto es para buscar y comunicar si existe o no categoría.////////////////////////////////7
-    async categoryExists(id: number) {
+    // Crear cliente
+    async create(dto: CreateCustomerDTO) {
         try {
-            const category =  await this.prisma.category.findUnique({
-                where: { id:id },
-            });
-            return !!category; //true si existe la categoriay false si no.
-
-        } catch (error: any) {
-            throw new RpcException({
-                statusCode: 500,
-                message: `error interno al intentar encontrar categoria `,
-            });
-        }
-    }
-
-
-
-    // Crear categoria
-    async create(dto: CreateCategoryDTO) {
-        try {
-            return await this.prisma.category.create({ data: dto });
+            return await this.prisma.customer.create({ data: dto });
         } catch (error: any) {
             if (error.code === 'P2002') {
                 throw new RpcException({
                     statusCode: 409,
-                    message: 'La categoría ya existe en el sistema',
+                    message: 'La cliente ya existe en el sistema',
                 });
             }
 
             throw new RpcException({
                 statusCode: 500,
-                message: 'Error al intentar registrar la nueva categoría',
+                message: 'Error al intentar registrar el nuevo cliente',
             });
         }
     }
 
-    // Listar todos las categoria
+    // Listar todos el cliente
     async findAll() {
         try {
-            return await this.prisma.category.findMany();
+            return await this.prisma.customer.findMany();
         } catch (error: any) {
             throw new RpcException({
                 statusCode: 500,
-                message: 'Error al intentar listar todos las categorias',
+                message: 'Error al intentar listar todos el clientes',
             });
         }
     }
 
-    // Listar solo category activos
+    // Listar solo customer activos
     async findActive() {
         try {
-            return await this.prisma.category.findMany({
+            return await this.prisma.customer.findMany({
                 where: { isActive: true },
             });
             //
         } catch (error: any) {
             throw new RpcException({
                 statusCode: 500,
-                message: 'Error al intentar listar categorías activas',
+                message: 'Error al intentar listar clientes activas',
             });
         }
     }
 
-    // Listar solo categorias dados de baja (inactivos)
+    // Listar solo clientes dados de baja (inactivos)
 async findInactive() {
     try {
-        const categories = await this.prisma.category.findMany({
+        const categories = await this.prisma.customer.findMany({
             where: { isActive: false },
         });
         // Validar si el array está vacío
         if (categories.length === 0) {
             throw new RpcException({
                 statusCode: 404,
-                message: 'No se encontraron categorías inactivas',
+                message: 'No se encontraron clientes inactivas',
             });
         }
 
@@ -97,39 +79,39 @@ async findInactive() {
 
         throw new RpcException({
             statusCode: 500,
-            message: 'Error al intentar listar las categorías inactivas',
+            message: 'Error al intentar listar el clientes inactivas',
         });
     }
 }
 
-    // Buscar un categoria por ID
-    async findOne(id: number) {
+    // Buscar un cliente por ID
+    async findOne(id: string) {
         try {
-            const category = await this.prisma.category.findUnique({
+            const customer = await this.prisma.customer.findUnique({
                 where: { id },
             });
 
-            if (!category) {
+            if (!customer) {
                 throw new RpcException({
                     statusCode: 404,
-                    message: `Categoría no encontrado, ID ${id}`,
+                    message: `cliente no encontrado, ID ${id}`,
                 });
             }
-            return category; // Corregido: ahora retorna el categoria encontrado
+            return customer; // Corregido: ahora retorna el cliente encontrado
         } catch (error: any) {
             if (error instanceof RpcException) throw error;
 
             throw new RpcException({
                 statusCode: 500,
-                message: `Error al intentar buscar el categoría: ${error.message || error}`,
+                message: `Error al intentar buscar el cliente: ${error.message || error}`,
             });
         }
     }
 
-    // Actualizar parcialmente un categoria
-    async update(id: number, dto: UpdateCategoryDTO) {
+    // Actualizar parcialmente un cliente
+    async update(id: string, dto: UpdateCustomerDTO) {
         try {
-            return await this.prisma.category.update({
+            return await this.prisma.customer.update({
                 where: { id },
                 data: dto
             });
@@ -137,14 +119,14 @@ async findInactive() {
             if (error.code === 'P2025') {
                 throw new RpcException({
                     statusCode: 404,
-                    message: `Categoría no encontrada para actualizar, ID ${id}`,
+                    message: `cliente no encontrada para actualizar, ID ${id}`,
                 });
             }
 
             if (error.code === 'P2002') {
                 throw new RpcException({
                     statusCode: 409,
-                    message: 'Los datos actualizados entran en conflicto con una categoría existente',
+                    message: 'Los datos actualizados entran en conflicto con una cliente existente',
                 });
             }
 
@@ -157,10 +139,10 @@ async findInactive() {
         }
     }
 
-    // Dar de baja un categoria (Soft Delete)
-    async deactivate(id: number) {
+    // Dar de baja un cliente (Soft Delete)
+    async deactivate(id: string) {
         try {
-            return await this.prisma.category.update({
+            return await this.prisma.customer.update({
                 where: { id },
                 data: { isActive: false },
             });
@@ -168,7 +150,7 @@ async findInactive() {
             if (error.code === 'P2025') {
                 throw new RpcException({
                     statusCode: 404,
-                    message: `Categoría no encontrado para dar de baja, ID ${id}`,
+                    message: `cliente no encontrado para dar de baja, ID ${id}`,
                 });
             }
 
@@ -176,15 +158,15 @@ async findInactive() {
 
             throw new RpcException({
                 statusCode: 500,
-                message: `Error al intentar dar de baja la categoría: ${error.message || error}`,
+                message: `Error al intentar dar de baja el cliente: ${error.message || error}`,
             });
         }
     }
 
-    // Restaurar / Activar un categoria dado de baja
-    async activate(id: number) {
+    // Restaurar / Activar un cliente dado de baja
+    async activate(id: string) {
         try {
-            return await this.prisma.category.update({
+            return await this.prisma.customer.update({
                 where: { id },
                 data: { isActive: true },
             });
@@ -192,7 +174,7 @@ async findInactive() {
             if (error.code === 'P2025') {
                 throw new RpcException({
                     statusCode: 404,
-                    message: `Categoría no encontrado para activar, ID ${id}`,
+                    message: `cliente no encontrado para activar, ID ${id}`,
                 });
             }
 
@@ -200,37 +182,37 @@ async findInactive() {
 
             throw new RpcException({
                 statusCode: 500,
-                message: `Error al intentar activar el categoría: ${error.message || error}`,
+                message: `Error al intentar activar el cliente: ${error.message || error}`,
             });
         }
     }
 
-        // Eliminar un categoria físicamente
-    async remove(id: number) {
+        // Eliminar un cliente físicamente
+    async remove(id: string) {
         try {
-            await this.prisma.category.delete({
+            await this.prisma.customer.delete({
                 where: { id },
             });
 
             //retornamos un mensaje de éxito 
             return {
                 statusCode: 200,
-                message: `Categoría eliminado exitosamente, ID ${id}`,
+                message: `cliente eliminado exitosamente, ID ${id}`,
             }
-            //ahora manejamos el error de que el categoria no existe
+            //ahora manejamos el error de que el cliente no existe
         } catch (error: any) {
             if (error.code === 'P2025') {
                 throw new RpcException({
                     statusCode: 404,
-                    message: `Categoría no encontrada para eliminar, ID ${id}`,
+                    message: `cliente no encontrada para eliminar, ID ${id}`,
                 });
             }
-            // si el error es de tipo RpcException, lo lanzamos directamente
+            // si el error es de tipo RpcException, lo elzamos directamente
             if (error instanceof RpcException) throw error;
 
             throw new RpcException({
                 statusCode: 500,
-                message: `Error al intentar eliminar la categoría: ${error.message || error}`,
+                message: `Error al intentar eliminar el cliente: ${error.message || error}`,
             });
         }
     }

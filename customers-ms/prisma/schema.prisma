@@ -13,14 +13,20 @@ datasource db {
     provider = "postgresql"
 }
 
-model Category {
-    id          Int  @id @default(autoincrement())
-    name        String  @unique
-    description String?
+model customer {
+    id          String  @id @default(uuid())
+    
+    firstname        String 
+    lastname        String
+    email   String
+    phone    String
+    address    String
     isActive    Boolean @default(true)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@map("categories")
+    @@map("customers")
 }
+
+

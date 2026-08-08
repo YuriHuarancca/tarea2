@@ -1,13 +1,25 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 //les ponemos pipes para validar los datos que vienen en el body de la request, para que no se rompa la app y se pueda manejar el error de manera correcta
-export class CreateCategoryDTO {
+export class CreateCustomerDTO {
     @IsString()
     @IsNotEmpty()
-    name!: string;
+    firstname!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    lastname!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    email!: string;
 
     @IsString()
     @IsOptional()
-    description?: string;
+    phone!: string;
+
+    @IsString()
+    @IsOptional()
+    address!: string;
 
     @IsBoolean()
     @IsOptional()
