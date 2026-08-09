@@ -2,6 +2,59 @@
 
 
 #############################################################
+######PRUEBAS DE CLIENTES######################################
+
+### Crear cliente
+POST {{host}}/customers HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstname": "Pedro",
+    "lastname": "Ccente",
+    "email": "pedroz@email.com",
+    "phone": "555-456",
+    "address": "Calle 123",
+    "isActive": true
+}
+
+### Listar todos los clientes
+GET {{host}}/customers HTTP/1.1
+
+### Listar solo clientes activos
+GET {{host}}/customers/active HTTP/1.1
+
+### Listar solo clientes dados de baja (inactivos)
+GET {{host}}/customers/inactive HTTP/1.1
+
+### Listar por ID un cliente
+GET {{host}}/customers/28920c35-9e9b-4382-9676-408b34861d86 HTTP/1.1
+
+### Actualizar cliente
+PATCH {{host}}/customers/28920c35-9e9b-4382-9676-408b34861d86 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": "28920c35-9e9b-4382-9676-408b34861d86",
+    "firstname": "Juan Carlos",
+    "lastname": "Pérez",
+    "email": "juan.carlos@email.com",
+    "phone": "555-9876",
+    "address": "Av. Central 456"
+}
+
+### Soft Delete (desactivar cliente)
+PATCH {{host}}/customers/deactivate/28920c35-9e9b-4382-9676-408b34861d86 HTTP/1.1
+
+### RESTaURAR 
+PATCH {{host}}/customers/activate/28920c35-9e9b-4382-9676-408b34861d86 HTTP/1.1
+
+### Remover cliente (eliminación física y permanente)
+DELETE {{host}}/customers/28920c35-9e9b-4382-9676-408b34861d86 HTTP/1.1
+###
+
+
+
+#############################################################
 #PRUEBA DE CATEGORIAS###########################################
 
 ### Crear categoria
@@ -46,9 +99,10 @@ DELETE {{host}}/categories/8 HTTP/1.1
 ###
 
 
+
+
 #############################################################
 ######PRUEBAS DE PRODUCTOS#####################################3
-
 
 ### Crear producto
 POST {{host}}/products HTTP/1.1
