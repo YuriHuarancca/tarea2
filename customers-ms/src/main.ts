@@ -25,6 +25,6 @@
 
 		  await app.listen();
 
-		  Logger.log(`Categories-MS corriendo en http://${envConfig.HOST}:${envConfig.PORT}`, 'main');
+		  Logger.log(`Customers-MS corriendo en http://${envConfig.HOST}:${envConfig.PORT}`, 'main');
 		}
 		bootstrap();

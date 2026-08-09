@@ -9,6 +9,8 @@
 			PRODUCTS_MS_PORT: number;
 			CATEGORIES_MS_HOST: string
 			CATEGORIES_MS_PORT: number
+			CUSTOMERS_MS_HOST:string
+			CUSTOMERS_MS_PORT:number
 		}
 
 		export const envSchema = Joi.object<IEnvConfig>({
@@ -17,7 +19,9 @@
 			PRODUCTS_MS_HOST: Joi.string().default('localhost'),
 			PRODUCTS_MS_PORT: Joi.number().integer().min(3000).max(65535).default(3001),
 			CATEGORIES_MS_HOST: Joi.string().default('localhost'),
-			CATEGORIES_MS_PORT: Joi.number().integer().min(3000).max(65535).default(3002)
+			CATEGORIES_MS_PORT: Joi.number().integer().min(3000).max(65535).default(3002),
+			CUSTOMERS_MS_HOST: Joi.string().default('localhost'),
+			CUSTOMERS_MS_PORT: Joi.number().integer().min(3000).max(65535).default(3003)
 
 		})
 			.unknown(true)// permite que existan otras variables de entorno que no estén definidas en el esquema
